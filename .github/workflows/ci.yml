@@ -5,14 +5,32 @@ on:
     branches: 
       - lab9
       - main
+    paths-ignore:
+      - 'docs/**'
   pull_request:
+    paths-ignore:
+      - 'docs/**'
   workflow_dispatch:
+    inputs:
+      run_lint:
+        description: 'Run linter?'
+        required: false
+        default: 'true'
+      run_typecheck:
+        description: 'Run type-check?'
+        required: false
+        default: 'true'
+      run_tests:
+        description: 'Run tests?'
+        required: false
+        default: 'true'
   schedule:
     - cron: '0 8 * * 1' 
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
