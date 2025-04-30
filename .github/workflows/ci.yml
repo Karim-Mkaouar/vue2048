@@ -2,7 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [lab9]
+    branches: 
+      - lab9
+      - main
   pull_request:
   workflow_dispatch:
   schedule:
@@ -26,6 +28,8 @@ jobs:
         with:
           name: dist
           path: dist
+          retention-days: ${{ github.ref == 'refs/heads/main' && 7 || 1 }}
+    
 
   lint:
     runs-on: ubuntu-latest
