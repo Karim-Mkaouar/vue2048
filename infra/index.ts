@@ -15,7 +15,7 @@ const staticSite = new web.StaticSite("vue2048-static", {
   location: resourceGroup.location,
   sku: { name: "Free" },
   tags: { Class: "EI8IT213" },
-  repositoryUrl: "https://github.com/Karim-Mkaouar/vue2048", 
+  repositoryUrl: "", 
 });
 
 // Export the default hostname of the Static Web App
