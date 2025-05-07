@@ -1,23 +1,29 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as resources from "@pulumi/azure-native/resources";
-import * as storage from "@pulumi/azure-native/storage";
+import * as web from "@pulumi/azure-native/web";
 
 // Create an Azure Resource Group
-const resourceGroup = new resources.ResourceGroup("resourceGroup");
-
-// Create an Azure resource (Storage Account)
-const storageAccount = new storage.StorageAccount("sa", {
-    resourceGroupName: resourceGroup.name,
-    sku: {
-        name: storage.SkuName.Standard_LRS,
-    },
-    kind: storage.Kind.StorageV2,
+const resourceGroup = new resources.ResourceGroup("vue2048-rg", {
+  location: "France Central",
+  tags: { Class: "EI8IT213" }
 });
 
-// Export the primary key of the Storage Account
-const storageAccountKeys = storage.listStorageAccountKeysOutput({
-    resourceGroupName: resourceGroup.name,
-    accountName: storageAccount.name
+// Create an Azure Static Web App
+const staticSite = new web.StaticSite("vue2048-static", {
+  resourceGroupName: resourceGroup.name,
+  location: resourceGroup.location,
+  sku: { name: "Free" },
+  tags: { Class: "EI8IT213" },
+  repositoryUrl: "", // Optionally set if you want GitHub integration
 });
 
-export const primaryStorageKey = storageAccountKeys.keys[0].value;
+// Export the default hostname of the Static Web App
+export const staticSiteHostname = staticSite.defaultHostname;
+
+// Export the deployment token (API key)
+import { listStaticSiteSecretsOutput } from "@pulumi/azure-native/web";
+const secrets = listStaticSiteSecretsOutput({
+  name: staticSite.name,
+  resourceGroupName: resourceGroup.name,
+});
+export const deploymentToken = pulumi.secret(secrets.apply(s => s.properties?.apiKey));
