@@ -1,10 +1,11 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as resources from "@pulumi/azure-native/resources";
 import * as web from "@pulumi/azure-native/web";
+import { listStaticSiteSecretsOutput } from "@pulumi/azure-native/web";
 
 // Create an Azure Resource Group
 const resourceGroup = new resources.ResourceGroup("vue2048-rg", {
-  location: "France Central",
+  location: "westeurope",
   tags: { Class: "EI8IT213" }
 });
 
@@ -14,14 +15,13 @@ const staticSite = new web.StaticSite("vue2048-static", {
   location: resourceGroup.location,
   sku: { name: "Free" },
   tags: { Class: "EI8IT213" },
-  repositoryUrl: "", // Optionally set if you want GitHub integration
+  repositoryUrl: "https://github.com/Karim-Mkaouar/vue2048", 
 });
 
 // Export the default hostname of the Static Web App
 export const staticSiteHostname = staticSite.defaultHostname;
 
 // Export the deployment token (API key)
-import { listStaticSiteSecretsOutput } from "@pulumi/azure-native/web";
 const secrets = listStaticSiteSecretsOutput({
   name: staticSite.name,
   resourceGroupName: resourceGroup.name,
